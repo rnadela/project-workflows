@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Project Workflows</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <style>
+      :root {
+        --bg: #f7f7f5;
+        --card: #fff;
+        --ink: #1c1f24;
+        --muted: #5b6270;
+        --line: #dfe2e6;
+        --accent: #0b6e4f;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #15171a;
+          --card: #1e2125;
+          --ink: #eceef1;
+          --muted: #a3aab5;
+          --line: #30353b;
+          --accent: #4fc79c;
+        }
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font:
+          16px/1.5 system-ui,
+          sans-serif;
+      }
+      main {
+        max-width: 640px;
+        margin: 0 auto;
+        padding: 48px 16px;
+      }
+      h1 {
+        margin: 0 0 4px;
+        font-size: 28px;
+      }
+      p {
+        margin: 0 0 24px;
+        color: var(--muted);
+      }
+      a.card {
+        display: block;
+        margin-bottom: 12px;
+        padding: 16px 20px;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        color: inherit;
+        text-decoration: none;
+      }
+      a.card:hover {
+        border-color: var(--accent);
+      }
+      a.card strong {
+        color: var(--accent);
+      }
+      a.card span {
+        display: block;
+        color: var(--muted);
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Project workflows</h1>
+      <p>Client workflow previews, by project.</p>
+      <a class="card" href="agapay/">
+        <strong>Agapay</strong>
+        <span
+          >Province health Credits Program: program workflow swimlane and
+          clickable prototype.</span
+        >
+      </a>
+    </main>
+  </body>
+</html>
