@@ -1,0 +1,1367 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <title>Agapay Program Workflow</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap"
+    />
+    <style>
+      /* Layout: a phase rail on the left, six role lanes as columns, time runs down the page. Steps sit in the lane of whoever does them. */
+      :root {
+        --bg: #f4f6fa;
+        --surface: #ffffff;
+        --ink: #0d1b36;
+        --ink-2: #475569;
+        --line: #cfd6e2;
+        --navy: #1b3a7a;
+        --gold: #d9a400;
+        --gold-soft: #f5e6b3;
+        --gold-ink: #4d3a00;
+        --red: #b3261e;
+        --green: #1a6b3a;
+        --tip-bg: #0d1b36;
+        --tip-ink: #f4f6fa;
+        --lane-ben: #eef3fb;
+        --lane-office: #f6f2fb;
+        --lane-credits: #fbf6e8;
+        --lane-sys: #ecf4f6;
+        --lane-inst: #eef7f0;
+        --lane-fin: #fbf0ee;
+        --dot-ben: #2f5fb3;
+        --dot-office: #6b4aa8;
+        --dot-credits: #a87a00;
+        --dot-sys: #0b6a9c;
+        --dot-inst: #2a7a46;
+        --dot-fin: #b0503a;
+        --f-display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+        --f-body:
+          "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+        --f-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --bg: #0b1222;
+          --surface: #131d33;
+          --ink: #e6ebf5;
+          --ink-2: #a3b0c6;
+          --line: #2a3755;
+          --navy: #8fb0f0;
+          --gold: #e8bd3a;
+          --gold-soft: #3a3115;
+          --gold-ink: #f3dc97;
+          --red: #ff8a80;
+          --green: #7fd19b;
+          --tip-bg: #e6ebf5;
+          --tip-ink: #0d1b36;
+          --lane-ben: #111c33;
+          --lane-office: #18162d;
+          --lane-credits: #1c1a14;
+          --lane-sys: #0f1d26;
+          --lane-inst: #10201a;
+          --lane-fin: #211615;
+          --dot-ben: #86a8ea;
+          --dot-office: #b79cf0;
+          --dot-credits: #e8bd3a;
+          --dot-sys: #6cc3ea;
+          --dot-inst: #7fd19b;
+          --dot-fin: #f0a08c;
+          color-scheme: dark;
+        }
+      }
+      :root[data-theme="dark"] {
+        --bg: #0b1222;
+        --surface: #131d33;
+        --ink: #e6ebf5;
+        --ink-2: #a3b0c6;
+        --line: #2a3755;
+        --navy: #8fb0f0;
+        --gold: #e8bd3a;
+        --gold-soft: #3a3115;
+        --gold-ink: #f3dc97;
+        --red: #ff8a80;
+        --green: #7fd19b;
+        --tip-bg: #e6ebf5;
+        --tip-ink: #0d1b36;
+        --lane-ben: #111c33;
+        --lane-office: #18162d;
+        --lane-credits: #1c1a14;
+        --lane-sys: #0f1d26;
+        --lane-inst: #10201a;
+        --lane-fin: #211615;
+        --dot-ben: #86a8ea;
+        --dot-office: #b79cf0;
+        --dot-credits: #e8bd3a;
+        --dot-sys: #6cc3ea;
+        --dot-inst: #7fd19b;
+        --dot-fin: #f0a08c;
+        color-scheme: dark;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        background: var(--bg);
+        color: var(--ink);
+        font-family: var(--f-body);
+        font-size: 15px;
+        line-height: 1.5;
+        padding-left: max(16px, env(safe-area-inset-left, 0px));
+        padding-right: max(16px, env(safe-area-inset-right, 0px));
+        padding-block: 28px 48px;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0 0 auto;
+        height: env(safe-area-inset-top, 0px);
+        z-index: 30;
+        background: var(--bg);
+      }
+      .wrap {
+        max-width: 1440px;
+        margin: 0 auto;
+        display: grid;
+        gap: 22px;
+      }
+
+      header.top {
+        display: grid;
+        gap: 14px;
+      }
+      .eyebrow {
+        font-family: var(--f-mono);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--ink-2);
+      }
+      h1 {
+        font-family: var(--f-display);
+        font-stretch: 80%;
+        font-weight: 800;
+        font-size: clamp(30px, 4.4vw, 48px);
+        line-height: 1.02;
+        margin: 0;
+        letter-spacing: -0.01em;
+        text-wrap: balance;
+        color: var(--navy);
+      }
+      .lede {
+        margin: 0;
+        max-width: 68ch;
+        color: var(--ink-2);
+      }
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 18px;
+        align-items: center;
+        font-size: 13px;
+        color: var(--ink-2);
+      }
+      .legend span {
+        display: inline-flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .sw {
+        width: 22px;
+        height: 14px;
+        border-radius: 3px;
+        border: 1.5px solid var(--line);
+        background: var(--surface);
+        display: inline-block;
+      }
+      .sw.sys {
+        border-style: dashed;
+        border-color: var(--dot-sys);
+      }
+      .sw.gate {
+        background: var(--gold-soft);
+        border-color: var(--gold);
+      }
+      .sw.dec {
+        border-color: var(--navy);
+        border-width: 2px;
+        transform: skewX(-12deg);
+      }
+      .sw.tip {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: inline-grid;
+        place-items: center;
+        font: 600 11px/1 var(--f-mono);
+        color: var(--navy);
+      }
+      .hint {
+        font-size: 13px;
+        color: var(--ink-2);
+      }
+
+      .scroller {
+        position: relative;
+      }
+      @media (max-width: 1099px) {
+        .scroller {
+          overflow-x: auto;
+          border: 1px solid var(--line);
+          border-radius: 10px;
+          background: var(--surface);
+          -webkit-overflow-scrolling: touch;
+        }
+        .lane-head {
+          position: static !important;
+        }
+      }
+      .grid-cols {
+        display: grid;
+        grid-template-columns: 168px repeat(6, minmax(140px, 1fr));
+        min-width: 1080px;
+      }
+
+      .lane-head {
+        position: sticky;
+        top: env(safe-area-inset-top, 0px);
+        z-index: 20;
+        background: var(--bg);
+        padding-block: 8px 0;
+      }
+      .lane-head .cell {
+        padding: 10px 10px 12px;
+        border-bottom: 2px solid var(--line);
+      }
+      .lane-head .corner {
+        font-family: var(--f-mono);
+        font-size: 11px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--ink-2);
+        align-self: end;
+      }
+      .lane-btn {
+        all: unset;
+        cursor: pointer;
+        display: grid;
+        gap: 2px;
+        padding: 10px 10px 12px;
+        border-bottom: 3px solid var(--lc);
+        border-radius: 6px 6px 0 0;
+        background: var(--lt);
+      }
+      .lane-btn:focus-visible {
+        outline: 2px solid var(--navy);
+        outline-offset: 2px;
+      }
+      .lane-btn .ln {
+        font-family: var(--f-display);
+        font-stretch: 85%;
+        font-weight: 700;
+        font-size: 16px;
+        line-height: 1.15;
+        display: flex;
+        gap: 7px;
+        align-items: center;
+      }
+      .lane-btn .ln::before {
+        content: "";
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--lc);
+        flex: none;
+      }
+      .lane-btn .lr {
+        font-size: 12px;
+        color: var(--ink-2);
+        line-height: 1.35;
+      }
+      .lane-btn[aria-pressed="true"] {
+        box-shadow: inset 0 0 0 2px var(--lc);
+      }
+
+      .board {
+        position: relative;
+        row-gap: 18px;
+        padding-block: 14px 24px;
+      }
+      .lanes-bg {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        grid-template-columns: inherit;
+        pointer-events: none;
+      }
+      .lanes-bg div {
+        background: var(--lt);
+        border-left: 1px dashed var(--line);
+        transition: opacity 0.2s;
+      }
+      .lanes-bg div:first-child {
+        background: transparent;
+        border: 0;
+      }
+      svg.links {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        overflow: visible;
+        z-index: 1;
+      }
+      svg.links path {
+        fill: none;
+        stroke: var(--ink-2);
+        stroke-width: 1.5;
+        opacity: 0.55;
+        transition: opacity 0.2s;
+      }
+      svg.links marker path {
+        fill: var(--ink-2);
+        stroke: none;
+        opacity: 0.8;
+      }
+
+      .phase {
+        grid-column: 1;
+        position: relative;
+        z-index: 2;
+        padding: 4px 14px 4px 4px;
+        border-top: 2px solid var(--navy);
+        align-self: stretch;
+      }
+      .phase .pn {
+        font-family: var(--f-mono);
+        font-size: 12px;
+        color: var(--gold);
+        font-weight: 500;
+      }
+      .phase h2 {
+        font-family: var(--f-display);
+        font-stretch: 80%;
+        font-size: 21px;
+        font-weight: 800;
+        margin: 2px 0 6px;
+        line-height: 1.05;
+        color: var(--navy);
+        text-wrap: balance;
+      }
+      .phase p {
+        margin: 0;
+        font-size: 12.5px;
+        color: var(--ink-2);
+        line-height: 1.45;
+      }
+      .phase-gap {
+        margin-top: 26px;
+      }
+
+      .step {
+        position: relative;
+        z-index: 2;
+        margin-inline: 10px;
+        background: var(--surface);
+        border: 1.5px solid var(--line);
+        border-radius: 8px;
+        padding: 10px 12px 11px;
+        display: grid;
+        gap: 4px;
+        align-self: start;
+        box-shadow: 0 1px 0 rgb(13 27 54 / 0.04);
+        transition:
+          opacity 0.2s,
+          transform 0.15s,
+          box-shadow 0.15s;
+        outline: none;
+      }
+      .step:hover,
+      .step:focus-visible,
+      .step.on {
+        box-shadow: 0 6px 18px rgb(13 27 54 / 0.14);
+        transform: translateY(-1px);
+      }
+      .step:focus-visible {
+        outline: 2px solid var(--navy);
+        outline-offset: 2px;
+      }
+      .step .no {
+        font-family: var(--f-mono);
+        font-size: 11px;
+        color: var(--ink-2);
+        display: flex;
+        justify-content: space-between;
+        gap: 6px;
+        align-items: center;
+      }
+      .step .nr {
+        display: inline-flex;
+        gap: 6px;
+        align-items: center;
+      }
+      .step .who {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--lc);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .step h3 {
+        font-size: 14px;
+        line-height: 1.3;
+        margin: 0;
+        font-weight: 700;
+        text-wrap: balance;
+      }
+      .step .out {
+        font-size: 12px;
+        line-height: 1.35;
+        color: var(--ink-2);
+      }
+      .step .out b {
+        color: var(--red);
+        font-weight: 600;
+      }
+      .step .out i {
+        font-style: normal;
+        color: var(--green);
+        font-weight: 600;
+      }
+      .step.sys {
+        border-style: dashed;
+        border-color: var(--dot-sys);
+      }
+      .step.gate {
+        background: var(--gold-soft);
+        border-color: var(--gold);
+      }
+      .step.gate h3,
+      .step.gate .out {
+        color: var(--gold-ink);
+      }
+      .step.dec {
+        border-color: var(--navy);
+        border-width: 2px;
+      }
+      .step.dec h3::before {
+        content: "◆ ";
+        color: var(--navy);
+        font-size: 11px;
+        vertical-align: 1px;
+      }
+      .step.new::after {
+        content: "New";
+        position: absolute;
+        top: -9px;
+        right: 10px;
+        font: 600 10px/1 var(--f-mono);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        background: var(--navy);
+        color: var(--surface);
+        padding: 4px 6px;
+        border-radius: 4px;
+      }
+      .info {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: 1.5px solid var(--line);
+        background: var(--surface);
+        color: var(--navy);
+        font: 600 11px/1 var(--f-mono);
+        display: inline-grid;
+        place-items: center;
+        flex: none;
+      }
+      .step:hover .info,
+      .step.on .info {
+        border-color: var(--navy);
+        background: var(--navy);
+        color: var(--surface);
+      }
+
+      .dim .step:not(.match),
+      .dim .phase {
+        opacity: 0.28;
+      }
+      .dim svg.links path {
+        opacity: 0.15;
+      }
+
+      #tip {
+        position: fixed;
+        z-index: 50;
+        max-width: 320px;
+        background: var(--tip-bg);
+        color: var(--tip-ink);
+        border-radius: 8px;
+        padding: 12px 14px 13px;
+        font-size: 13px;
+        line-height: 1.5;
+        box-shadow: 0 12px 30px rgb(0 0 0 / 0.25);
+        pointer-events: none;
+        opacity: 0;
+        transform: translateY(4px);
+        transition:
+          opacity 0.12s,
+          transform 0.12s;
+      }
+      #tip.show {
+        opacity: 1;
+        transform: none;
+      }
+      #tip .tt {
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      #tip ul {
+        margin: 6px 0 0;
+        padding-left: 18px;
+      }
+      #tip li + li {
+        margin-top: 3px;
+      }
+      #tip .tag {
+        display: inline-block;
+        margin-top: 8px;
+        font: 500 10.5px/1 var(--f-mono);
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        padding: 4px 6px;
+        border-radius: 4px;
+        background: var(--gold);
+        color: #1f1700;
+      }
+      #tip .ref {
+        margin-top: 8px;
+        font: 500 11px/1.3 var(--f-mono);
+        opacity: 0.7;
+      }
+
+      footer {
+        font-size: 12.5px;
+        color: var(--ink-2);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 18px;
+        justify-content: space-between;
+        border-top: 1px solid var(--line);
+        padding-top: 14px;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="top">
+        <div class="eyebrow">
+          Province health Credits Program · end-to-end process
+        </div>
+        <h1>How Agapay works, from enrollment to payment</h1>
+        <p class="lede">
+          Each column is a group of people. Read top to bottom: the Program is
+          set up, a Beneficiary is enrolled and gets a Card, Credits arrive,
+          they are used at a pharmacy or hospital, and the Province pays the
+          Institution. Hover or tap any step for details.
+        </p>
+        <div class="legend" aria-label="Legend">
+          <span><i class="sw"></i>Step done by a person</span>
+          <span><i class="sw sys"></i>Done by the system</span>
+          <span><i class="sw dec"></i>Check with a yes/no outcome</span>
+          <span><i class="sw gate"></i>Needs a second person to approve</span>
+          <span><i class="sw tip">i</i>More details</span>
+        </div>
+        <div class="hint">
+          Press a column title to highlight only that group’s steps.
+        </div>
+      </header>
+
+      <div class="scroller" id="scroller">
+        <div class="grid-cols lane-head" id="laneHead">
+          <div class="cell corner">Phase</div>
+        </div>
+        <div class="grid-cols board" id="board">
+          <div class="lanes-bg" id="lanesBg"></div>
+          <svg class="links" id="links" aria-hidden="true">
+            <defs>
+              <marker
+                id="arr"
+                viewBox="0 0 10 10"
+                refX="8"
+                refY="5"
+                markerWidth="7"
+                markerHeight="7"
+                orient="auto-start-reverse"
+              >
+                <path d="M0 0 L10 5 L0 10 z"></path>
+              </marker>
+            </defs>
+          </svg>
+        </div>
+      </div>
+
+      <footer>
+        <span
+          >Based on the Agapay PRD (10 Nov 2026), UX spec and architecture (11
+          Nov 2026), the Award change of 11 Nov 2026, and the face matching
+          change of 12 Nov 2026 (awaiting client sign-off).</span
+        >
+        <span
+          >Details marked “To confirm with the Province” are working
+          assumptions.</span
+        >
+      </footer>
+    </div>
+    <div id="tip" role="tooltip"></div>
+
+    <script>
+      (() => {
+        const LANES = [
+          [
+            "ben",
+            "Beneficiary",
+            "Senior citizen, PWD, solo parent, or indigent resident, or their Authorized Representative",
+          ],
+          [
+            "office",
+            "Province office",
+            "Administrator, enrollment officer, card officer",
+          ],
+          ["credits", "Province Credits", "Credits officer and approver"],
+          [
+            "sys",
+            "Agapay system",
+            "Automatic checks, Credit Accounts, statements",
+          ],
+          ["inst", "Pharmacy or hospital", "Counter staff and Head Office"],
+          [
+            "fin",
+            "Finance and leadership",
+            "Finance officer, provincial health officer, governor’s office",
+          ],
+        ];
+        const TBC = "To confirm with the Province";
+
+        /* Each step: lane, title, who, kind (sys | gate | dec), out (short outcome line), tip {t, b, list, tag, ref}, flags: with (same row as previous), start (no incoming arrow), from (index offset of source) */
+        const PHASES = [
+          {
+            name: "Set up the Program",
+            blurb:
+              "Before anyone enrolls, the Province sets up people, Credits, and accredited Institutions.",
+            steps: [
+              {
+                lane: "office",
+                who: "Administrator",
+                t: "Create Province Users and give them roles",
+                tip: {
+                  b: "Each staff member signs in to the Admin Dashboard with a password and an authenticator app code.",
+                  list: [
+                    "Roles: administrator, enrollment officer, card officer, credits officer, approver, finance officer, analyst",
+                    "A person can hold more than one role",
+                    "Nobody approves their own request",
+                  ],
+                  ref: "FR-20, FR-43",
+                },
+              },
+              {
+                lane: "credits",
+                who: "Credits officer",
+                t: "Set the yearly Allocation amount",
+                out: "Default 10,000 Credits a year",
+                tip: {
+                  b: "1 Credit is worth ₱1. The amount can differ by Beneficiary category.",
+                  list: [
+                    "A change applies from the next grant",
+                    "Credits already given are not changed",
+                  ],
+                  tag: TBC,
+                  ref: "FR-12",
+                },
+              },
+              {
+                lane: "credits",
+                who: "Approver",
+                t: "Approve the amount",
+                kind: "gate",
+                tip: {
+                  b: "Every change to Credits needs a second person. The approver sees the old and new amounts side by side.",
+                  ref: "FR-14",
+                },
+              },
+              {
+                lane: "office",
+                who: "Administrator",
+                t: "Accredit the pharmacy or hospital and its Branches",
+                tip: {
+                  b: "The Institution is registered with license numbers and accreditation dates. The system warns before an accreditation ends.",
+                  list: [
+                    "Creates the owner’s Head Office account",
+                    "A Branch that is no longer accredited cannot sell",
+                  ],
+                  ref: "FR-18, UJ-11",
+                },
+              },
+              {
+                lane: "sys",
+                who: "Vendor and administrator",
+                t: "Register a Counter Terminal and assign it to a Branch",
+                kind: "sys",
+                tip: {
+                  b: "The Vendor registers each Android Counter Terminal with its own device key. The administrator then assigns it to one Branch.",
+                  list: [
+                    "An unassigned terminal cannot sign anyone in",
+                    "A lost terminal can be disabled at once",
+                  ],
+                  ref: "FR-48",
+                },
+              },
+              {
+                lane: "inst",
+                who: "Head Office",
+                t: "Add counter staff",
+                tip: {
+                  b: "The owner signs in to the Institution Dashboard and adds staff. Staff sign in on the Counter Terminal with their name and a 6-digit passcode.",
+                  ref: "FR-19, UJ-11",
+                },
+              },
+            ],
+          },
+          {
+            name: "Enroll a Beneficiary",
+            blurb:
+              "A resident is registered once, with consent and a live photo. Face matching stops anyone enrolling twice.",
+            steps: [
+              {
+                lane: "ben",
+                who: "Beneficiary",
+                t: "Comes to the enrollment desk with a valid ID",
+                tip: {
+                  b: "People can also be imported from barangay lists first. They then appear as Pre-enrolled and finish enrollment in person.",
+                  ref: "FR-47",
+                },
+              },
+              {
+                lane: "office",
+                who: "Enrollment officer",
+                t: "Enter details and record consent",
+                tip: {
+                  b: "Consent to the privacy notice includes face matching. Face matching is required to enroll.",
+                  tag: TBC,
+                  ref: "FR-1, FR-53, UJ-1",
+                },
+              },
+              {
+                lane: "ben",
+                who: "Beneficiary",
+                t: "Looks at the camera and makes one head movement",
+                kind: "new",
+                tip: {
+                  b: "The photo is taken live. The screen asks the person to turn, nod, or tilt their head, so a printed photo or a screen cannot be used.",
+                  list: [
+                    "Photo files cannot be uploaded instead",
+                    "This photo is the one counter staff compare at every sale",
+                  ],
+                  ref: "FR-53",
+                },
+              },
+              {
+                lane: "sys",
+                who: "System",
+                t: "Search for the same face, name, or ID",
+                kind: "dec new",
+                out: "<b>Likely match</b> → officer compares both, gives a reason",
+                tip: {
+                  b: "The face is compared with every enrolled Beneficiary and Authorized Representative, using CompreFace on the Province’s private servers. The same name and birth date, or the same government ID, is also checked.",
+                  list: [
+                    "Both records show side by side with photos",
+                    "Saving as a different person needs a reason and raises a Flag",
+                    "Face records hold no pictures; photos stay in the encrypted photo store",
+                  ],
+                  tag: "Match threshold to confirm",
+                  ref: "FR-2, FR-53",
+                },
+              },
+              {
+                lane: "office",
+                who: "Enrollment officer",
+                t: "Name an Authorized Representative",
+                out: "Optional · face checked",
+                tip: {
+                  b: "A family member who can use the Card on the Beneficiary’s behalf. Their live photo is taken and searched against every enrolled face.",
+                  list: [
+                    "A representative cannot have the Beneficiary’s own face",
+                    "A Beneficiary who is present authorizes by passing a face check",
+                    "No match: an approver authorizes after checking a government ID",
+                  ],
+                  ref: "FR-44, FR-53, UJ-10",
+                },
+              },
+            ],
+          },
+          {
+            name: "Make and issue the Card",
+            blurb:
+              "The Province prints, encodes, and checks a genuine Agapay Card.",
+            steps: [
+              {
+                lane: "office",
+                who: "Card officer",
+                t: "Print the ID on a blank Card",
+                tip: {
+                  b: "Blank Cards are registered by batch before use. The card design is managed by the Province.",
+                  ref: "FR-5, FR-6, FR-46",
+                },
+              },
+              {
+                lane: "sys",
+                who: "System",
+                t: "Encode the Card with its secret keys",
+                kind: "sys",
+                tip: {
+                  b: "Each Card is an NFC chip with keys only the Province’s system knows. A copied card cannot answer the system’s check, so it is refused everywhere.",
+                  list: [
+                    "No balance is stored on the Card",
+                    "Losing the Card never loses Credits",
+                  ],
+                  ref: "FR-7, AD-7",
+                },
+              },
+              {
+                lane: "office",
+                who: "Card officer",
+                t: "Tap the Card to confirm it shows the right person",
+                kind: "dec",
+                out: "<b>Does not match</b> → Card destroyed and reprinted",
+                tip: {
+                  b: "The officer taps the new Card on the Office Station tablet and compares the photo and name with the print.",
+                  ref: "FR-8",
+                },
+              },
+              {
+                lane: "ben",
+                who: "Beneficiary",
+                t: "Chooses a 6-digit PIN on the tablet",
+                tip: {
+                  b: "The officer hands over the Office Station. The officer never sees the PIN. Easy PINs like 111111 or a birth date are refused.",
+                  ref: "FR-11",
+                },
+              },
+              {
+                lane: "sys",
+                who: "System",
+                t: "Give this year’s Allocation",
+                kind: "sys",
+                out: "<i>Credits ready to use</i>",
+                tip: {
+                  b: "Every active Beneficiary gets the Allocation on 1 January. Someone who joins mid-year gets it on enrollment.",
+                  list: [
+                    "Allocation Credits expire at year end",
+                    "Never more than one Allocation per year",
+                  ],
+                  tag: TBC,
+                  ref: "FR-12, FR-17",
+                },
+              },
+            ],
+          },
+          {
+            name: "Give extra Credits (Awards)",
+            blurb:
+              "For disasters and special cases, the governor’s office can award extra Credits.",
+            steps: [
+              {
+                lane: "fin",
+                who: "Governor’s office",
+                t: "Decides who gets extra help",
+                tip: {
+                  b: "For example: 2,000 Credits to everyone in three municipalities hit by a typhoon.",
+                  ref: "UJ-5",
+                },
+              },
+              {
+                lane: "credits",
+                who: "Credits officer",
+                t: "Build the Award’s recipient list",
+                kind: "new",
+                tip: {
+                  b: "Recipients can be added four ways, all into one list:",
+                  list: [
+                    "A whole municipality, barangay, age range, sex, or category",
+                    "People picked one by one from search",
+                    "Tapping Cards on a paired tablet, for example at an evacuation center",
+                    "An uploaded list of Program ID numbers",
+                  ],
+                  extra:
+                    "A person added twice counts once. Anyone can be removed before submitting, and the Award can be saved as a draft.",
+                  ref: "FR-13 (updated 11 Nov 2026)",
+                },
+              },
+              {
+                lane: "sys",
+                who: "System",
+                t: "Show the Credits as Pending",
+                kind: "sys",
+                tip: {
+                  b: "Until approved, the Credits count in the Current Balance but cannot be spent yet. They show on the profile and on any Receipt.",
+                  ref: "FR-13",
+                },
+              },
+              {
+                lane: "credits",
+                who: "Approver",
+                t: "Review the list and approve",
+                kind: "gate",
+                out: "<b>Rejected</b> → Pending Credits removed",
+                tip: {
+                  b: "A different person must approve. The submitter cannot approve their own Award.",
+                  ref: "FR-14",
+                },
+              },
+              {
+                lane: "sys",
+                who: "System",
+                t: "Add the Credits to each Available Balance",
+                kind: "sys",
+                tip: {
+                  b: "People suspended or closed at the moment of approval are skipped and listed.",
+                  ref: "FR-13, FR-14",
+                },
+              },
+            ],
+          },
+          {
+            name: "Use Credits at the counter",
+            blurb:
+              "At an accredited pharmacy or hospital, the Card, the photo, and the PIN confirm every sale.",
+            steps: [
+              {
+                lane: "ben",
+                who: "Beneficiary",
+                t: "Presents the Card with a prescription or bill",
+                tip: {
+                  b: "An Authorized Representative can present the Card instead. Their photo shows beside the Beneficiary’s.",
+                  ref: "UJ-2, UJ-10",
+                },
+              },
+              {
+                lane: "inst",
+                who: "Counter staff",
+                t: "Tap the Card on the Counter Terminal",
+              },
+              {
+                lane: "sys",
+                who: "System",
+                t: "Is the Card genuine and allowed?",
+                kind: "dec",
+                out: "<b>No</b> → refused and reported",
+                tip: {
+                  b: "Every tap is checked live with the Card’s secret keys. A sale is refused when:",
+                  list: [
+                    "The card is copied, blocked, or replaced",
+                    "The Beneficiary is suspended, or their re-check is overdue",
+                    "The Branch’s accreditation has ended",
+                  ],
+                  extra:
+                    "Refusals appear in the Province’s unusual activity report.",
+                  ref: "FR-9, FR-24, UJ-4",
+                },
+              },
+              {
+                lane: "inst",
+                who: "Counter staff",
+                t: "Check the photo, then enter what is sold",
+                tip: {
+                  b: "Pharmacies enter medicines; hospitals enter service categories with amounts. The senior citizen and PWD discount is recorded.",
+                  list: [
+                    "The screen shows balances before and after",
+                    "If Credits do not cover the total, the rest is paid in cash",
+                  ],
+                  ref: "FR-22, FR-23, UJ-3",
+                },
+              },
+              {
+                lane: "ben",
+                who: "Beneficiary",
+                t: "Checks the amount and enters the PIN",
+                tip: {
+                  b: "The amount shows again on the PIN screen. Five wrong PINs lock the Card until the Province resets it.",
+                  ref: "FR-11, FR-23",
+                },
+              },
+              {
+                lane: "sys",
+                who: "System",
+                t: "Deduct the Credits, once",
+                kind: "sys",
+                tip: {
+                  b: "If the connection drops mid-sale, the terminal finds out whether the sale went through. A sale is never charged twice.",
+                  list: [
+                    "Credits that expire soonest are used first",
+                    "A same-day mistake can be voided with a manager’s passcode",
+                  ],
+                  ref: "FR-25, FR-26",
+                },
+              },
+              {
+                lane: "inst",
+                who: "Counter staff",
+                t: "Print the Receipt",
+                out: "<i>Balances and last 3 sales</i>",
+                tip: {
+                  b: "The Receipt shows Available and Current Balance and the last three Transactions. Reprints are marked as copies.",
+                  ref: "FR-27, FR-28",
+                },
+              },
+            ],
+          },
+          {
+            name: "Pay the pharmacy or hospital",
+            blurb:
+              "Each period the Province checks what it owes and records payment.",
+            steps: [
+              {
+                lane: "sys",
+                who: "System",
+                t: "Draft a Settlement Statement per Branch",
+                kind: "sys",
+                tip: {
+                  b: "At the end of each period: monthly, twice a month, or weekly. 1 Credit = ₱1 owed. An Institution can ask for one combined statement for all Branches.",
+                  tag: TBC,
+                  ref: "FR-29",
+                },
+              },
+              {
+                lane: "fin",
+                who: "Finance officer",
+                t: "Review and hold questioned sales",
+                kind: "dec",
+                out: "<b>Wrong sale</b> → Reversal, Credits returned",
+                tip: {
+                  b: "A held sale stays off the statement until released. A Reversal needs approval; the Credits go back to the Beneficiary and the Branch is not paid for it.",
+                  ref: "FR-32, FR-50, UJ-9",
+                },
+              },
+              {
+                lane: "fin",
+                who: "Finance officer",
+                t: "Approve statements and record payment",
+                tip: {
+                  b: "After the treasurer pays, the finance officer records the payment date and reference. Statements export as PDF and spreadsheet for COA.",
+                  ref: "FR-29, FR-30",
+                },
+              },
+              {
+                lane: "inst",
+                who: "Head Office",
+                t: "Sees statements and payments",
+                out: "<i>Paid, with the Province’s reference</i>",
+                tip: {
+                  b: "The Institution Dashboard shows sales for all Branches, each statement, and its payment status.",
+                  ref: "FR-31, FR-39, UJ-7",
+                },
+              },
+            ],
+          },
+          {
+            name: "Monitor and care, all year",
+            blurb: "Ongoing work that runs alongside everything above.",
+            steps: [
+              {
+                lane: "sys",
+                who: "System",
+                t: "Flag unusual activity",
+                kind: "sys",
+                start: true,
+                tip: {
+                  b: "Copied cards, many sales in a short time, and other patterns the Province sets are raised as Flags for review.",
+                  ref: "FR-37",
+                },
+              },
+              {
+                lane: "fin",
+                who: "Provincial health officer",
+                t: "Review use and maps; export for the governor",
+                with: true,
+                start: true,
+                tip: {
+                  b: "Enrollment, Credit use, demographics, and maps of where use is low. Analytics never identify a Beneficiary.",
+                  ref: "FR-33 to FR-38, UJ-8",
+                },
+              },
+              {
+                lane: "ben",
+                who: "Beneficiary",
+                t: "Reports a lost Card and pays the fee",
+                start: true,
+                tip: {
+                  b: "The fee is paid at the Province cashier. An approver can waive it.",
+                  ref: "FR-10, UJ-6",
+                },
+              },
+              {
+                lane: "sys",
+                who: "System",
+                t: "Face check: is this the Beneficiary or a representative?",
+                kind: "dec new",
+                out: "<b>No match</b> → approver authorizes",
+                tip: {
+                  b: "The live capture shows beside the current and previous photos. Faces change with age and illness, so a mismatch is not a refusal.",
+                  list: [
+                    "An approver signs in on the officer’s screen",
+                    "The approver confirms a government ID was checked and gives a reason",
+                    "The override is recorded and raises a Flag",
+                    "The same path applies when the face service is down",
+                  ],
+                  ref: "FR-10, FR-53",
+                },
+              },
+              {
+                lane: "office",
+                who: "Card officer",
+                t: "Block the old Card and issue a replacement",
+                out: "<i>Balance unchanged</i>",
+                tip: {
+                  b: "The old Card stops working everywhere at once. Credits stay in the Credit Account because nothing is stored on the Card.",
+                  ref: "FR-10",
+                },
+              },
+              {
+                lane: "office",
+                who: "Enrollment officer",
+                t: "Yearly Eligibility Re-check with a face check",
+                kind: "dec",
+                start: true,
+                out: "<b>Overdue</b> → suspended · <b>No match</b> → approver",
+                tip: {
+                  b: "Once a year the Province confirms the Beneficiary is alive, still lives in the province, and is still eligible. The person at the desk passes a face check, with the current and previous photos shown beside the live capture.",
+                  list: [
+                    "An Authorized Representative can do it with a signed authorization, and passes their own face check",
+                    "No match or face service down: an approver authorizes after an ID check",
+                  ],
+                  tag: TBC,
+                  ref: "FR-45, FR-53, UJ-10",
+                },
+              },
+              {
+                lane: "sys",
+                who: "System",
+                t: "Expire unused Credits; keep the audit log",
+                kind: "sys",
+                with: true,
+                start: true,
+                tip: {
+                  b: "Allocation Credits expire at year end; Awards on their stated date. Every action by every user is recorded and cannot be changed.",
+                  ref: "FR-17, FR-42",
+                },
+              },
+            ],
+          },
+        ];
+
+        const laneIdx = Object.fromEntries(LANES.map((l, i) => [l[0], i + 2]));
+        const esc = (s) =>
+          String(s).replace(
+            /[&<>"]/g,
+            (c) =>
+              ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c],
+          );
+        const head = document.getElementById("laneHead"),
+          board = document.getElementById("board"),
+          bg = document.getElementById("lanesBg");
+        const laneVars = (k) =>
+          `--lc: var(--dot-${k}); --lt: var(--lane-${k});`;
+
+        bg.innerHTML =
+          "<div></div>" +
+          LANES.map((l) => `<div style="${laneVars(l[0])}"></div>`).join("");
+        head.innerHTML += LANES.map(
+          (l) =>
+            `<button class="lane-btn" type="button" aria-pressed="false" data-lane="${l[0]}" style="${laneVars(l[0])}"><span class="ln">${esc(l[1])}</span><span class="lr">${esc(l[2])}</span></button>`,
+        ).join("");
+
+        const steps = [];
+        let row = 1,
+          html = "";
+        PHASES.forEach((ph, pi) => {
+          const first = row;
+          ph.steps.forEach((s, si) => {
+            if (s.with && si) row--;
+            const n = `${pi + 1}.${si + 1}`;
+            const kind = s.kind ? " " + s.kind : "";
+            const id = "s" + steps.length;
+            steps.push({
+              id,
+              s,
+              row,
+              prevMain: s.start ? null : steps.length - 1,
+            });
+            html += `<div class="step${kind}${si === 0 ? " phase-gap" : ""}" id="${id}" data-lane="${s.lane}" tabindex="${s.tip ? 0 : -1}" style="grid-column:${laneIdx[s.lane]}; grid-row:${row}; ${laneVars(s.lane)}"${s.tip ? ` aria-describedby="tip"` : ""}>
+        <div class="no"><span class="who">${esc(s.who)}</span><span class="nr">${n}${s.tip ? '<span class="info" aria-hidden="true">i</span>' : ""}</span></div>
+        <h3>${esc(s.t)}</h3>${s.out ? `<div class="out">${s.out}</div>` : ""}</div>`;
+            row++;
+          });
+          html += `<div class="phase${pi ? " phase-gap" : ""}" style="grid-row:${first} / ${row}"><div class="pn">Phase ${pi + 1}</div><h2>${esc(ph.name)}</h2><p>${esc(ph.blurb)}</p></div>`;
+        });
+        board.insertAdjacentHTML("beforeend", html);
+
+        /* Arrows: from the previous step's bottom to this step's top, with one elbow */
+        const svg = document.getElementById("links");
+        function draw() {
+          svg.querySelectorAll("path.l").forEach((p) => p.remove());
+          const B = board.getBoundingClientRect();
+          steps.forEach((st, i) => {
+            if (st.prevMain == null || i === 0) return;
+            const a = document
+              .getElementById(steps[st.prevMain].id)
+              .getBoundingClientRect();
+            const b = document.getElementById(st.id).getBoundingClientRect();
+            const x1 = a.left + a.width / 2 - B.left,
+              y1 = a.bottom - B.top;
+            const x2 = b.left + b.width / 2 - B.left,
+              y2 = b.top - B.top - 2;
+            let d;
+            if (Math.abs(x1 - x2) < 2) d = `M${x1} ${y1} V${y2}`;
+            else if (y2 - y1 < 6) {
+              const ya = a.top + a.height / 2 - B.top,
+                dir = x2 > x1 ? 1 : -1;
+              const xa = dir > 0 ? a.right - B.left : a.left - B.left,
+                xb = dir > 0 ? b.left - B.left - 2 : b.right - B.left + 2;
+              d = `M${xa} ${ya} H${xb}`;
+            } else {
+              const ym = y2 - 9,
+                r = 6,
+                dir = x2 > x1 ? 1 : -1;
+              d = `M${x1} ${y1} V${ym - r} Q${x1} ${ym} ${x1 + dir * r} ${ym} H${x2 - dir * r} Q${x2} ${ym} ${x2} ${ym + r} V${y2}`;
+            }
+            const p = document.createElementNS(
+              "http://www.w3.org/2000/svg",
+              "path",
+            );
+            p.setAttribute("class", "l");
+            p.setAttribute("d", d);
+            p.setAttribute("marker-end", "url(#arr)");
+            svg.appendChild(p);
+          });
+        }
+        draw();
+        if (document.fonts && document.fonts.ready)
+          document.fonts.ready.then(draw);
+        if (window.ResizeObserver) new ResizeObserver(draw).observe(board);
+        window.addEventListener("resize", draw);
+
+        /* Tooltips: hover, keyboard focus, or tap */
+        const tip = document.getElementById("tip");
+        let pinned = null;
+        function show(el) {
+          const st = steps.find((x) => x.id === el.id);
+          const t = st && st.s.tip;
+          if (!t) return;
+          document
+            .querySelectorAll(".step.on")
+            .forEach((x) => x !== el && x.classList.remove("on"));
+          el.classList.add("on");
+          tip.innerHTML = `<div class="tt">${esc(st.s.t)}</div><div>${esc(t.b)}</div>${t.list ? `<ul>${t.list.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}${t.extra ? `<div style="margin-top:6px">${esc(t.extra)}</div>` : ""}${t.tag ? `<span class="tag">${esc(t.tag)}</span>` : ""}${t.ref ? `<div class="ref">${esc(t.ref)}</div>` : ""}`;
+          const r = el.getBoundingClientRect(),
+            vw = document.documentElement.clientWidth,
+            vh = window.innerHeight;
+          tip.style.left = "0px";
+          tip.style.top = "0px";
+          tip.classList.add("show");
+          const w = tip.offsetWidth,
+            h = tip.offsetHeight,
+            m = 12;
+          let x = r.right + m;
+          if (x + w > vw - m) x = r.left - w - m;
+          if (x < m)
+            x = Math.max(m, Math.min(vw - w - m, r.left + r.width / 2 - w / 2));
+          let y =
+            x === r.right + m || x === r.left - w - m ? r.top : r.bottom + 8;
+          if (y + h > vh - m)
+            y = Math.max(
+              m,
+              (x === r.right + m || x === r.left - w - m
+                ? r.bottom
+                : r.top - 8) - h,
+            );
+          tip.style.left = x + "px";
+          tip.style.top = y + "px";
+        }
+        function hide(force) {
+          if (pinned && !force) return;
+          tip.classList.remove("show");
+          document
+            .querySelectorAll(".step.on")
+            .forEach((x) => x.classList.remove("on"));
+          if (force) pinned = null;
+        }
+        board.addEventListener("mouseover", (e) => {
+          const el = e.target.closest(".step");
+          if (el && !pinned) show(el);
+        });
+        board.addEventListener("mouseout", (e) => {
+          const el = e.target.closest(".step");
+          if (el && !el.contains(e.relatedTarget)) hide();
+        });
+        board.addEventListener("focusin", (e) => {
+          const el = e.target.closest(".step");
+          if (el) show(el);
+        });
+        board.addEventListener("focusout", () => hide());
+        board.addEventListener("click", (e) => {
+          const el = e.target.closest(".step");
+          if (!el) return;
+          if (pinned === el) {
+            hide(true);
+            return;
+          }
+          pinned = el;
+          show(el);
+        });
+        document.addEventListener("click", (e) => {
+          if (!e.target.closest(".step")) hide(true);
+        });
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") hide(true);
+        });
+        window.addEventListener("scroll", () => hide(true), { passive: true });
+        document
+          .getElementById("scroller")
+          .addEventListener("scroll", () => hide(true), { passive: true });
+
+        /* Lane focus */
+        head.addEventListener("click", (e) => {
+          const btn = e.target.closest(".lane-btn");
+          if (!btn) return;
+          const on = btn.getAttribute("aria-pressed") !== "true";
+          head
+            .querySelectorAll(".lane-btn")
+            .forEach((b) => b.setAttribute("aria-pressed", "false"));
+          board.classList.toggle("dim", on);
+          board
+            .querySelectorAll(".step")
+            .forEach((s) =>
+              s.classList.toggle(
+                "match",
+                on && s.dataset.lane === btn.dataset.lane,
+              ),
+            );
+          if (on) btn.setAttribute("aria-pressed", "true");
+        });
+      })();
+    </script>
+  </body>
+</html>
